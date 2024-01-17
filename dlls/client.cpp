@@ -4253,10 +4253,17 @@ int AddToFullPack(struct entity_state_s *state, int e, edict_t *ent, edict_t *ho
 	{
 		if (!CheckEntityRecentlyInPVS(hostindex, e, gpGlobals->time))
 		{
-			if (!ENGINE_CHECK_VISIBILITY((const struct edict_s *)ent, pSet))
+			if (player && !CBaseEntity::Instance(ent)->IsAlive())
 			{
-				MarkEntityInPVS(hostindex, e, gpGlobals->time, true);
-				return 0;
+				//Don't check visibility and always transmit state packets for dead players.
+			}
+			else
+			{
+				if (!ENGINE_CHECK_VISIBILITY((const struct edict_s*)ent, pSet))
+				{
+					MarkEntityInPVS(hostindex, e, gpGlobals->time, true);
+					return 0;
+				}
 			}
 
 			MarkEntityInPVS(hostindex, e, gpGlobals->time);
